@@ -37,7 +37,7 @@ This creates a new configuration with ocean (`OPA_SRC`) and sea-ice (`LIM_SRC_2`
  
 This configuration can now be modified. To do so, move the contents of `MY_SRC` from this repository into the `NEMOGCM/CONFIG/ORCA2_TAM/MY_SRC` directory and recompile using
 
-`./makenemo -n ORCA2_TAM`
+`./makenemo -n ORCA2_TAM add_key "key_asminc"`
 
 ### Obtaining and linking forcing and other model input files
 In order to run NEMO-ORCA2, additional files are required, which can be found [here](https://doi.org/10.5281/zenodo.1471702).
