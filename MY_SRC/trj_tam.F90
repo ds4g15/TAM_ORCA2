@@ -899,6 +899,10 @@ CONTAINS
             ! Output trajectory fields
             CALL iom_rstput( it, it, inum, 'un'   , un   )
             CALL iom_rstput( it, it, inum, 'vn'   , vn   )
+            CALL iom_rstput( it, it, inum, 'wn'   , wn   )
+            CALL iom_rstput( it, it, inum, 'tn'   , tsn(:,:,:,jp_tem)   )
+            CALL iom_rstput( it, it, inum, 'sn'   , tsn(:,:,:,jp_sal)   )
+            CALL iom_rstput( it, it, inum, 'sshn' , sshn )
 !!! 20191004H - switch to allow adjoint output 
             IF (.not.PRESENT(kadj)) THEN
 !!! /20191004H
@@ -927,18 +931,22 @@ CONTAINS
 !!! /20191004B
 
                CALL iom_rstput( it, it, inum, 'wn_tl'   , wn_tl   )
-               CALL iom_rstput( it, it, inum, 'hdivn_tl', hdivn_tl)
-               CALL iom_rstput( it, it, inum, 'rotn_tl' , rotn_tl )
-               CALL iom_rstput( it, it, inum, 'rhd_tl' , rhd_tl )
-               CALL iom_rstput( it, it, inum, 'rhop_tl' , rhop_tl )
+!!! 20191004B - also limiting TLM output variables
+               !CALL iom_rstput( it, it, inum, 'hdivn_tl', hdivn_tl)
+               !CALL iom_rstput( it, it, inum, 'rotn_tl' , rotn_tl )
+               !CALL iom_rstput( it, it, inum, 'rhd_tl' , rhd_tl )
+               !CALL iom_rstput( it, it, inum, 'rhop_tl' , rhop_tl )
+!!! /20191004B
                CALL iom_rstput( it, it, inum, 'sshn_tl' , sshn_tl )
 !!! 20191004H - switch to allow adjoint output
             ELSE
                CALL iom_rstput(it, it, inum, 'wn_ad',    wn_ad)
-               CALL iom_rstput(it, it, inum, 'hdivn_ad', hdivn_ad)
-               CALL iom_rstput(it, it, inum, 'rotn_ad',  rotn_ad)
-               CALL iom_rstput(it, it, inum, 'rhd_ad',   rhd_ad)
-               CALL iom_rstput(it, it, inum, 'rhop_ad',  rhop_ad)
+!!! 20191004B - also limiting output variables for brevity
+               !CALL iom_rstput(it, it, inum, 'hdivn_ad', hdivn_ad)
+               !CALL iom_rstput(it, it, inum, 'rotn_ad',  rotn_ad)
+               !CALL iom_rstput(it, it, inum, 'rhd_ad',   rhd_ad)
+               !CALL iom_rstput(it, it, inum, 'rhop_ad',  rhop_ad)
+!!! /20191004B
                CALL iom_rstput(it, it, inum, 'sshn_ad',  sshn_ad)
 !!! 20191004B - combining multiple variables into a single output variable
                zicapprox3d(:,:,:) = tsn_ad(:,:,:,jp_tem) + tsb_ad(:,:,:,jp_tem)
@@ -957,7 +965,6 @@ CONTAINS
 !!! /20191004B
 
 !!! /20191004H
-
             CALL iom_close( inum )
 !!! 20191004B Combining multiple variables into a single output variable
             CALL wrk_dealloc(jpi, jpj, jpk, zicapprox3d)

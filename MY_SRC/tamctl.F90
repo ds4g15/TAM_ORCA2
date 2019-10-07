@@ -36,7 +36,7 @@ MODULE tamctl
 !!! /20191004M
 
 !!! 20191004L initialise TAM from a netCDF file
-   CHARACTER(len=64) :: cn_tl_passive_init
+   CHARACTER(len=64) :: cn_tam_input
 !!!/20191004L
 !!! 20191004W - incorporate EIV into trajectory velocity fields
    LOGICAL :: ln_tl_eiv

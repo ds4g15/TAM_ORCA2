@@ -116,13 +116,13 @@ CONTAINS
       INTEGER ::   istp, jk      ! time step index
 
 !!! 20191004V - ability to apply cost function to nonlinear model
-      NAMELIST/namtst_tam/ cn_tl_passive_init, ln_tl_eiv, nn_itcf000, ln_swi_opatam
+      NAMELIST/namtst_tam/ cn_tam_input, ln_tl_eiv, nn_itcf000, ln_swi_opatam
       REAL(KIND=wp), POINTER, DIMENSION(:,:,:) :: zvn_trjcf !cost function "V" for nonlinear fields 
       REAL(KIND=wp), POINTER, DIMENSION(:,:,:) :: ztn_trjcf !cost function "V" for nonlinear fields 
       REAL(wp) :: cf_nltot
       INTEGER :: numcfnl
       INTEGER :: ncidcf
-      CHARACTER(len=64) :: cn_tl_passive_init = "COST_FUNCTION.nc"
+      CHARACTER(len=64) :: cn_tam_input = "COST_FUNCTION.nc"
       INTEGER :: ln_swi_opatam = 4 !added 4th option: nonlinear with adjoint cost function           
       !Unused variables below                                                                        
       LOGICAL :: ln_tl_eiv = .true.
@@ -200,7 +200,7 @@ CONTAINS
                   CALL wrk_alloc(jpi,jpj,jpk,ztn_trjcf)
                   zvn_trjcf(:,:,:) = 0.0_wp
                   ztn_trjcf(:,:,:) = 0.0_wp
-                  CALL iom_open(cn_tl_passive_init,ncidcf,kiolib = jpnf90)
+                  CALL iom_open(cn_tam_input,ncidcf,kiolib = jpnf90)
                   CALL iom_get(ncidcf,jpdom_autoglo,"v0_ad",zvn_trjcf,0)
                   CALL iom_get(ncidcf,jpdom_autoglo,"t0_ad",ztn_trjcf,0)
 #if defined key_mpp_mpi

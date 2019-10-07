@@ -268,14 +268,14 @@ CONTAINS
 !!! 20191004W - incorporate EIV into trajectory velocity fields
                      ln_tl_eiv,           &
 !!!20191004L initialise TAM from netCDF file
-                      cn_tl_passive_init, &
+                      cn_tam_input, &
 !!!/20191004L
 !!!20191004M cost function averaging window
                             nn_itcf000
       nn_itcf000 =0
 !!!/20191004M
 !!!20191004L initialise TAM from nc file
-      cn_tl_passive_init = 'tl_passive_init.nc'
+      cn_tam_input = 'tl_passive_init.nc'
 !!!/20191004L
 !!!20191004W - include EIV into trajectory velocity fields 
       ln_tl_eiv = .false.
@@ -292,7 +292,7 @@ CONTAINS
          WRITE(numout,*) '   Namelist namtst_tam'
          WRITE(numout,*) '      switch for tam testing             ln_swi_opatam  = ', ln_swi_opatam
 !!!20191004L initialise TAM from nc file        
-	 WRITE(numout,*) '      initial passive tracer distr.      cn_tl_passive_init =', cn_tl_passive_init
+	 WRITE(numout,*) '      initial passive tracer distr.      cn_tam_input =', cn_tam_input
 !!!/20191004L
 !!! 20191004W - incorporate EIV into trajectory velocity
 	 WRITE(numout,*) '      add EIV to trajectory velocity     ln_tl_eiv =', ln_tl_eiv

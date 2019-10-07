@@ -188,7 +188,7 @@ CONTAINS
          CALL wrk_alloc(jpi,jpj,jpk,zvn_tlin) ! V
          zvn_tlin(:,:,:) = 0.0_wp
          
-         CALL iom_open(cn_tl_passive_init,ncid,kiolib = jpnf90)
+         CALL iom_open(cn_tam_input,ncid,kiolib = jpnf90)
          CALL iom_get(ncid,jpdom_autoglo,"t0_tl",ztn_tlin,0)
          CALL iom_get(ncid,jpdom_autoglo,"v0_tl",zvn_tlin,0) 
 
@@ -264,7 +264,7 @@ CONTAINS
          CALL wrk_alloc(jpi,jpj,jpk,zvn_tlin)  
          ztn_tlin(:,:,:) = 0.0_wp
          zvn_tlin(:,:,:) = 0.0_wp              
-         CALL iom_open(cn_tl_passive_init,ncid,kiolib = jpnf90)
+         CALL iom_open(cn_tam_input,ncid,kiolib = jpnf90)
          CALL iom_get(ncid,jpdom_autoglo,"t0_ad",ztn_tlin,0) 
          CALL iom_get(ncid,jpdom_autoglo,"v0_ad",zvn_tlin,0) 
 

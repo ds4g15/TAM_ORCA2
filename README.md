@@ -193,7 +193,7 @@ Each feature or model change has its own ID. In the source code, a modification 
 All changes and their purpose are listed here and were either added by S. Mueller or myself. Asterisks indicate modifications which are essential to run NEMOTAM.
 
 - 20191004A : modifications permitting perturbations to the nonlinear model using "asminc"
-- 20191004B : single TAM output variables (e.g. tn+tb)
+- 20191004B : single TAM output variables (e.g. tn+tb) and specification of TAM output variables
 - 20191004C : Add "sshn" to nonlinear trajectory
 - 20191004D: Expanding trajectory and TAM filenames to allow at least 8-digit time-steps
 - 20191004E*: correct transition of b->n for kdir==1 [see here](http://forge.ipsl.jussieu.fr/nemo/attachment/ticket/1443/trj_tam.F90.diff)

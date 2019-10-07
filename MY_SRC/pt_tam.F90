@@ -64,7 +64,7 @@ CONTAINS
     !   WRITE(numout,*) "pttam - 1/(output frequency):              ", nn_pttam_out_freq
     !END IF
     IF (lwp) THEN
-       WRITE(numout,*) "pttam - filename for initialisation field: ", TRIM(cn_tl_passive_init)
+       WRITE(numout,*) "pttam - filename for initialisation field: ", TRIM(cn_tam_input)
        WRITE(numout,*) "pttam - 1/(output frequency):              ", nn_ittrjfrq_tan
     END IF
     !!! /20191007
@@ -122,7 +122,7 @@ CONTAINS
     ! Reading in of initial perturbation
     !!!20191007
     !CALL iom_open(cn_pttam_init,ncid,kiolib = jpnf90)
-    CALL iom_open(cn_tl_passive_init,ncid,kiolib = jpnf90)
+    CALL iom_open(cn_tam_input,ncid,kiolib = jpnf90)
     !!! /20191007
     CALL iom_get(ncid,jpdom_autoglo,"pt0_tl",ztn_tlin,0)
 
@@ -223,7 +223,7 @@ SUBROUTINE pt_adj
   ! Reading in of initial perturbation
   !!! 20191007
   !CALL iom_open(cn_pttam_init,ncid,kiolib = jpnf90)
-  CALL iom_open(cn_tl_passive_init,ncid,kiolib = jpnf90)
+  CALL iom_open(cn_tam_input,ncid,kiolib = jpnf90)
   !!! /20191007
   CALL iom_get(ncid,jpdom_autoglo,"pt0_tl",ztn_tlin,0)
 
