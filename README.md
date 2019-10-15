@@ -30,14 +30,14 @@ For a first-time NEMO install, the user will need to set up their machine's arch
 
 At this point, the configuration can be created. To do this, run the following command in the `CONFIG` directory:
 
-`./makenemo -d "OPATAM_SRC LIM_SRC_2 OPA_SRC" -n TAM_ORCA2_MASTER -m <ARCHITECTURE> add_key "key_netcdf4 key_mpp_mpi key_mpp_rep key_nosignedzero key_tam key_diainstant" del_key "key_iomput key_zdfddm"`
+`./makenemo -d "OPATAM_SRC LIM_SRC_2 OPA_SRC" -n TAM_ORCA2 -m <ARCHITECTURE> add_key "key_netcdf4 key_mpp_mpi key_mpp_rep key_nosignedzero key_tam key_diainstant" del_key "key_iomput key_zdfddm"`
 
 This creates a new configuration with ocean (`OPA_SRC`) and sea-ice (`LIM_SRC_2`) dynamics, and TAM (`OPATAM_SRC`, `key_tam`) compatibility. 
 (NOTE: customise line as required, e.g. regarding parallel processing - `key_mpp_mpi` and `key_mpp_rep`. Replace <ARCHITECTURE> with the relevant substring from the arch. filename)
  
-This configuration can now be modified. To do so, move the contents of `MY_SRC` from this repository into the `NEMOGCM/CONFIG/ORCA2_TAM/MY_SRC` directory and recompile using
+This configuration can now be modified. To do so, move the contents of `MY_SRC` from this repository into the `NEMOGCM/CONFIG/TAM_ORCA2/MY_SRC` directory and recompile using
 
-`./makenemo -n ORCA2_TAM add_key "key_asminc"`
+`./makenemo -n TAM_ORCA2 add_key "key_asminc"`
 
 ### Obtaining and linking forcing and other model input files
 In order to run NEMO-ORCA2, additional files are required, which can be found [here](https://doi.org/10.5281/zenodo.1471702).
