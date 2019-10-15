@@ -220,7 +220,7 @@ SUBROUTINE pt_adj
   !CALL iom_open(cn_pttam_init,ncid,kiolib = jpnf90)
   CALL iom_open(cn_tam_input,ncid,kiolib = jpnf90)
   !!! /20191007
-  CALL iom_get(ncid,jpdom_autoglo,"pt0_tl",ztn_tlin,0)
+  CALL iom_get(ncid,jpdom_autoglo,"pt0_ad",ztn_tlin,0)
 
 #if defined key_mpp_mpi
   CALL lbc_lnk(ztn_tlin(:,:,:), 'T', 1.0_wp)
