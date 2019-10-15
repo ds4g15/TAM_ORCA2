@@ -290,9 +290,9 @@ CONTAINS
                DO jj = 2, jpjm1
                   DO ji = fs_2, fs_jpim1
                      IF (jn==1) THEN
-                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+avt(ji,jj,jk))) ! this line
+                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+avt(ji,jj,jk))) 
                      ELSE !2016-11-29 applied above change to salinity field
-                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+fsavs(ji,jj,jk))) ! or this one
+                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+fsavs(ji,jj,jk))) 
                      ENDIF
                   END DO
                END DO
@@ -528,9 +528,9 @@ CONTAINS
                DO jj = 2, jpjm1
                   DO ji = fs_2, fs_jpim1
                      IF (jn==1) THEN
-                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+avt(ji,jj,jk))) ! maybe this one tbf
+                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+avt(ji,jj,jk))) 
                      ELSE 
-                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+fsavs(ji,jj,jk))) ! even this one
+                        zthtw(ji,jj,jk) = ( pwn(ji,jj,jk) /( e1t(ji,jj)*e2t(ji,jj)) ) / ( 2.0_wp * (1e-19_wp+fsavs(ji,jj,jk))) 
                      ENDIF
                   END DO
                END DO

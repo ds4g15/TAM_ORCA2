@@ -1016,8 +1016,11 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
 !-----------------------------------------------------------------------
 &nampttam   ! NEMOTAM for passive-tracer transport
 !-----------------------------------------------------------------------
-   ! additional options coming soon
-   
+   ln_pt_regional = .false. ! only read and write trajectory in region
+   rn_NEptlat =   90.0 ! Define region's boundaries
+   rn_NEptlon =  180.0
+   rn_SWptlat =  -90.0
+   rn_SWptlon = -180.0
 /
 !-----------------------------------------------------------------------
 &namtra_adv_tam    !   advection scheme for tracer

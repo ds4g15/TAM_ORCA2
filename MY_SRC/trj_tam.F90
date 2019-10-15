@@ -1,3 +1,5 @@
+!MODIFICATIONS
+! 20191013A - modifications to only read trajectory from tiles of interest 
 MODULE trj_tam
 #ifdef key_tam
    !!======================================================================
@@ -205,6 +207,8 @@ CONTAINS
          & zstp
       ! Initialize data and open file
       !! if step time is corresponding to a saved state
+
+
       IF ( ( MOD( kstp - nit000 + 1, nn_ittrjfrq ) == 0 )  ) THEN
 
 !!! 20191004R - trajectory offset option
@@ -213,11 +217,24 @@ CONTAINS
 !!!/20191004R
 
          IF ( inumtrj1 == -1 ) THEN
-
+            
             ! Define the input file
             !!! 20191004D
             !WRITE(cl_dirtrj, FMT='(I5.5,A,A,".nc")' ) it, '_', TRIM( cn_dirtrj )
+!!!20191013A - only read trajectory from areas of interest otherwise just read time 0
+         IF (  (ln_pt_regional == .FALSE.) .OR. &
+              & ( &
+              & ANY( (gphit < rn_NEptlat ) .AND. ( gphit > rn_SWptlat )) &
+              & .AND. &
+              & ANY( (glamt > rn_SWptlon ) .AND. (glamt < rn_NEptlon )) &
+              & ) &
+              &  ) THEN            
             WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', it
+         ELSE
+            !itz = nit000 - 1 + nn_ittrjoffset
+            WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (nit000 -1 + nn_ittrjoffset)
+         END IF
+!!!/20191013A
             !         WRITE(cl_dirtrj, FMT='(A,".nc")' ) TRIM( c_dirtrj )
             !!! /20191004D
 
@@ -381,10 +398,25 @@ CONTAINS
 
          IF ( ( kstp - nit000 + 1 /= 0 ) .AND. ( kdir == -1 ) ) THEN
             ! We update the input filename
+
+!!!20191013A - only read traj from areas of interest
+         IF (  (ln_pt_regional == .FALSE.) .OR. &
+              & ( &
+              & ANY( (gphit < rn_NEptlat ) .AND. ( gphit > rn_SWptlat )) &
+              & .AND. &
+              & ANY( (glamt > rn_SWptlon ) .AND. (glamt < rn_NEptlon )) &
+              & ) &
+              &  ) THEN            
+            
 !!!20191004D expanding I/O to allow up to 100e6 time steps
             !WRITE(cl_dirtrj, FMT='(I5.5,A,A,".nc")' ) (it-nn_ittrjfrq), '_', TRIM(cn_dirtrj )
             WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM(cn_dirtrj ), '_', (it-nn_ittrjfrq)
 ! /20191004D            
+         ELSE
+            WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (nit000 - 1 + nn_ittrjoffset)
+         END IF
+!!!/20191013A
+
             cl_dirtrj = TRIM( cl_dirtrj )
             IF(lwp) THEN
                WRITE(numout,*)
@@ -407,10 +439,23 @@ CONTAINS
             ! bug fixed to read several time the initial data
             IF ( ( kstp - nit000 + 1 == 0 ) .AND. ( kdir == 1 ) ) THEN
                ! Define the input file
+!!!20191013A - only read traj from areas of interest
+         IF (  (ln_pt_regional == .FALSE.) .OR. &
+              & ( &
+              & ANY( (gphit < rn_NEptlat ) .AND. ( gphit > rn_SWptlat )) &
+              & .AND. &
+              & ANY( (glamt > rn_SWptlon ) .AND. (glamt < rn_NEptlon )) &
+              & ) &
+              &  ) THEN            
 !!! 20191004D expanding I/O to allow up to 100e6 time steps
                !WRITE(cl_dirtrj, FMT='(I5.5, A,A,".nc")' ) it, '_', TRIM( cn_dirtrj )
-               WRITE(cl_dirtrj, FMT='(A,A,I0.8, ".nc")' ) TRIM( cn_dirtrj ), '_', it
+            WRITE(cl_dirtrj, FMT='(A,A,I0.8, ".nc")' ) TRIM( cn_dirtrj ), '_', it
 !!! /20191004D
+         ELSE
+               !itz = nit000 - 1 + nn_ittrjoffset
+            WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (nit000 - 1 + nn_ittrjoffset)
+         END IF
+!!!/20191013A
 
                cl_dirtrj = TRIM( cl_dirtrj )
 
@@ -530,15 +575,41 @@ CONTAINS
 
                ! Define the input file
                IF  (  kdir == -1   ) THEN
+!!!20191013A - only read traj from areas of interest
+                  IF (  (ln_pt_regional == .FALSE.) .OR. &
+                       & ( &
+                       & ANY( (gphit < rn_NEptlat ) .AND. ( gphit > rn_SWptlat )) &
+                       & .AND. &
+                       & ANY( (glamt > rn_SWptlon ) .AND. (glamt < rn_NEptlon )) &
+                       & ) &
+                       &  ) THEN            
+                                          
 !!!20191004D - expanding I/O filenames to allow up to 100e6 time steps
-                   WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', it
+                     WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', it
                   !WRITE(cl_dirtrj, FMT='(I5.5,A,A,".nc")' ) it, '_', TRIM( cn_dirtrj )
 !!!/20191004D
+                  ELSE
+                     WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (nit000 - 1)
+                  END IF
+!!!/20191013A
                ELSE
+!!!20191013A - only read traj from areas of interest
+                  IF (  (ln_pt_regional == .FALSE.) .OR. &
+                       & ( &
+                       & ANY( (gphit < rn_NEptlat ) .AND. ( gphit > rn_SWptlat )) &
+                       & .AND. &
+                       & ANY( (glamt > rn_SWptlon ) .AND. (glamt < rn_NEptlon )) &
+                       & ) &
+                       &  ) THEN            
+                                          
 !!!20191004D - expanding I/O filenames to allow up to 100e6 time steps
                   !WRITE(cl_dirtrj, FMT='(I5.5,A,A,".nc")' ) (it+nn_ittrjfrq), '_', TRIM( cn_dirtrj )
-                  WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (it+nn_ittrjfrq)
+                     WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (it+nn_ittrjfrq)
 !!!/20191004D
+                  ELSE
+                     WRITE(cl_dirtrj, FMT='(A,A,I0.8,".nc")' ) TRIM( cn_dirtrj ), '_', (nit000 - 1)
+                  END IF
+!!!/20191013A
                ENDIF
                cl_dirtrj = TRIM( cl_dirtrj )
 
@@ -852,6 +923,7 @@ CONTAINS
       !!-----------------------------------------------------------------------
       !! *Module udes
       USE iom
+
       !! * Arguments
       INTEGER, INTENT(in) :: &
          & kstp           ! Step for requested trajectory

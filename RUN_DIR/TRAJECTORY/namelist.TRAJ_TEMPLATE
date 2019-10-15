@@ -993,3 +993,42 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
     ln_trj_spl = .true.             ! Handling trajectory at simple precision
     nn_ittrjoffset = N_OFFSET
 /
+!-----------------------------------------------------------------------
+&namtst_tam ! NEMOTAM driver ('key_tam')
+!-----------------------------------------------------------------------
+   ln_swi_opatam  = 0         ! Switch for different TAM modes
+                                ! = 0 => Routine by routine adjoint test
+                                ! = 1 => Step adjoint test
+                                ! = 2 => Run LT model in stand-alone
+                                ! = 3 => Adjoint
+				! = 4 => Apply adjoint cost function to non-linear model
+				! = 5 => Passive tangent-linear
+				! = 6 => Passive adjoint
+   cn_tam_input = "TAM_init.nc"
+   ln_tl_eiv = .false. ! include EIV in trajectory velocity fields or not
+/
+!-----------------------------------------------------------------------
+&namtl_trj ! Writing trajectory during a TL run (key_tam)
+!-----------------------------------------------------------------------
+    ln_trjwri_tan = .false.
+    nn_ittrjfrq_tan   = 219
+    cn_tantrj = 'TAM_output/tam_trajectory' ! TAM output location & name format
+/
+!-----------------------------------------------------------------------
+&nampttam   ! NEMOTAM for passive-tracer transport
+!-----------------------------------------------------------------------
+   ln_pt_regional = .false. ! only read and write trajectory in region
+   rn_NEptlat =   90.0 ! Define region's boundaries
+   rn_NEptlon =  180.0
+   rn_SWptlat =  -90.0
+   rn_SWptlon = -180.0
+/
+!-----------------------------------------------------------------------
+&namtra_adv_tam    !   advection scheme for tracer
+!-----------------------------------------------------------------------
+   ln_traadv_cen2       =  .false.  !  2nd order centered scheme
+   ln_traadv_tvd        =  .true.   !  TVD scheme (nonlinear)
+   rn_traadv_weight_h   =  0.       ! horizontal weighting for centred v. upwind
+   rn_traadv_weight_v   =  0.       ! vertical centred v. upw weighting (c:0, u:1)
+                                    !      negative values invoke weighted-mean scheme
+/

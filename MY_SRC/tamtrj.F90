@@ -35,7 +35,7 @@ MODULE tamtrj
    USE dom_oce
    USE iom                 ! I/O module
    USE zdfmxl
-
+   !USE pttam, ONLY: rn_SWptlat, rn_SWptlon, rn_NEptlat, rn_NEptlon, ln_pt_regional
    IMPLICIT NONE
 
    !! * Routine accessibility
@@ -57,6 +57,15 @@ MODULE tamtrj
 !!! 20191004R - trajectory offsetting
       & nn_ittrjoffset
 !!! /20191004R
+!!!20191013A - selective, region-based trajectory I/O
+   LOGICAL, PUBLIC :: ln_pt_regional =.false.
+   REAL(wp), PUBLIC :: rn_SWptlat =  -90.0_wp
+   REAL(wp), PUBLIC :: rn_NEptlat =   90.0_wp
+   REAL(wp), PUBLIC :: rn_SWptlon = -180.0_wp
+   REAL(wp), PUBLIC :: rn_NEptlon =  180.0_wp
+   
+!!!/20191013A
+
 
 CONTAINS
    SUBROUTINE tam_trj_init
@@ -90,6 +99,26 @@ CONTAINS
 !!! 20191004R - trajectory offsetting
       nn_ittrjoffset = 0
 !!! /20191004R
+
+!!!20191013A - Selective, region-based trajectory I/O for passive tracer transport
+      NAMELIST/nampttam/ln_pt_regional, rn_SWptlat, rn_NEptlat, rn_SWptlon, rn_NEptlon
+      
+      ln_pt_regional = .false.
+      rn_SWptlat =  -90.0_wp
+      rn_NEptlat =   90.0_wp
+      rn_SWptlon = -180.0_wp
+      rn_NEptlon =  180.0_wp
+      
+
+      REWIND(numnam)
+      READ(numnam, nampttam)
+
+      IF (lwp) THEN
+       WRITE(numout,*) "pttam - regional passive tracer transport only:", ln_pt_regional
+       WRITE(numout,*) "Region boundaries: northeast (lat,lon):" , rn_NEptlat, rn_NEptlon
+       WRITE(numout,*) "Region boundaries: southwest (lat,lon):" , rn_SWptlat, rn_SWptlon
+    END IF
+!!!/20191013A      
 
 
       REWIND ( numnam )
@@ -194,11 +223,24 @@ CONTAINS
 !!! /20191004R
          !
          ! Define the output file
+
+!!!20191013A - only write trajectory on first time step or in region of interest
+      IF (    (ln_pt_regional == .FALSE.) .OR. &
+           & ( &
+           &   (ANY( (gphit < rn_NEptlat ) .AND. ( gphit > rn_SWptlat )) &
+           & .AND. &
+           & ANY( (glamt > rn_SWptlon ) .AND. (glamt < rn_NEptlon )) ) & 
+           & .OR. &
+           & ( it == nn_ittrjoffset ) &
+           & ) &
+           & ) THEN
+!!!/20191013
 !!!20191004D expanding filenames to allow longer runs
          !WRITE(cl_dirtrj, FMT='(I5.5,A,A)' ) it, '_', TRIM( cn_dirtrj )
          WRITE(cl_dirtrj, FMT='(A,A,I0.8)' ) TRIM( cn_dirtrj ), '_', it 
-         cl_dirtrj = TRIM( cl_dirtrj )
 !!!/20191004D
+
+         cl_dirtrj = TRIM( cl_dirtrj )
          CALL iom_open( cl_dirtrj, inum, ldwrt = .TRUE., kiolib = jprstlib)
 
          ! Output trajectory fields
@@ -235,8 +277,11 @@ CONTAINS
          CALL iom_rstput( it, it, inum, 'aeiw'  , aeiw, ktype = ntype )
 
          CALL iom_close( inum )
+!!!20191013A - regional trajectory IO
+      END IF
+!!!/20191013A
 
-      ENDIF
+   ENDIF
 
-   END SUBROUTINE tam_trj_wri
+ END SUBROUTINE tam_trj_wri
 END MODULE tamtrj

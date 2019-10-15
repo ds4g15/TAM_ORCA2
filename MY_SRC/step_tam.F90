@@ -37,6 +37,7 @@ MODULE step_tam
 !!! 20191004P - prevent output writing when in passive mode
    USE tamctl, ONLY: ln_swi_opatam
 !!! /20191004P
+   USE tamtrj, ONLY: nn_ittrjoffset
 #if defined key_agrif
 #error 'agrif not yet implemented in nemotam'
 #endif
@@ -215,7 +216,6 @@ CONTAINS
       END IF
       !!!/20191004P
       CALL trj_rea( kstp, 1) ! ... Read basic state trajectory at end of current step
-
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       ! Control, and restarts
       !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

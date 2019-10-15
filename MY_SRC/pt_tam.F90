@@ -41,7 +41,6 @@ MODULE pttam
   ! Variable declaration
   REAL(KIND=wp), POINTER, DIMENSION(:,:,:) :: ztn_tlin
   INTEGER:: ncid
-
   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:):: tmp_rm,sal_rm
   PUBLIC pt_init 
   PUBLIC pt_finalise
@@ -51,18 +50,6 @@ MODULE pttam
 CONTAINS 
 
   SUBROUTINE pt_init
-    !!! 20191007
-    !NAMELIST/nampttam/cn_pttam_init, nn_pttam_out_freq
-
-    !cn_pttam_init = 'PTTAM_init.nc'
-    !nn_pttam_out_freq = 15
-
-    !REWIND(numnam)
-    !READ(numnam, nampttam)
-    !IF (lwp) THEN
-    !   WRITE(numout,*) "pttam - filename for initialisation field: ", TRIM(cn_pttam_init)
-    !   WRITE(numout,*) "pttam - 1/(output frequency):              ", nn_pttam_out_freq
-    !END IF
     IF (lwp) THEN
        WRITE(numout,*) "pttam - filename for initialisation field: ", TRIM(cn_tam_input)
        WRITE(numout,*) "pttam - 1/(output frequency):              ", nn_ittrjfrq_tan
@@ -151,7 +138,7 @@ CONTAINS
     vb_tl(:,:,:) = 0.0_wp
     sshb_tl(:,:) = 0.0_wp
     tsb_tl(:,:,:,jp_tem) = ztn_tlin(:,:,:)
-    tsb_tl(:,:,:,jp_sal) = ztn_tlin(:,:,:)
+    tsb_tl(:,:,:,jp_sal) = 0.0_wp
 
     CALL pt_tam_wri(nit000 - 1,0) !write to output file for initial step
     CALL istate_init_tan
@@ -168,6 +155,14 @@ CONTAINS
        ub_tl(:,:,:) = 0.0_wp
        vb_tl(:,:,:) = 0.0_wp
        sshb_tl(:,:) = 0.0_wp
+
+     !!! 20191013A - kill tracer concentrations outside region of interest
+     !IF (.NOT. ( (narea-1==38) .OR. (narea-1==39) .OR. (narea-1==42) .OR. (narea-1==43) .OR. (narea-1==46) .OR. (narea-1==47) .OR. (narea-1==50) .OR. (narea-1==51) )) THEN
+     IF ( NOT ( ANY( (gphit < 60) .AND. ( gphit > 10)) .AND. ANY( (glamt > -70) .AND. (glamt < 0 ) ) ) ) THEN
+        tsn_tl(:,:,:,jp_tem)=0.0_wp
+        tsb_tl(:,:,:,jp_tem)=0.0_wp        
+     END IF
+     !!!/20191013A
 
        ! write output ocasionally...
        !!!20191007
@@ -256,7 +251,6 @@ SUBROUTINE pt_adj
      !!! /20191007
         CALL pt_tam_wri( istep,1) 
      END IF
-
      un_ad(:,:,:) = 0.0_wp
      vn_ad(:,:,:) = 0.0_wp
      sshn_ad(:,:) = 0.0_wp 
@@ -279,29 +273,24 @@ SUBROUTINE pt_adj
 END SUBROUTINE pt_adj
 
 SUBROUTINE pt_tam_wri( kstp , wri_swi )
-
-
   REAL(wp), POINTER, DIMENSION(:,:,:) :: zicapprox3d 
   INTEGER, INTENT( in ) :: wri_swi
   INTEGER, INTENT( in ) :: kstp
   CHARACTER(LEN=132)::zfname
-
   CALL wrk_alloc(jpi, jpj, jpk, zicapprox3d)
 
+   zicapprox3d(:,:,:) = tsn_tl(:,:,:,jp_tem) + tsb_tl(:,:,:,jp_tem)
+   CALL lbc_lnk(zicapprox3d(:,:,:), 'T', 1.0_wp) ! move lbc_lnk to outside conditional so all nodes are gathered
 
-!pt_conc,pt_vol and pt_vent_vol?
 IF (wri_swi==0) THEN
-
    WRITE(zfname, FMT='(A,I0.8,A)') 'PTTAM_output_', kstp, '.nc'
-   
    CALL iom_open(zfname, ncid, ldwrt=.TRUE., kiolib = jprstlib)
    !! link tsn_tl and tsb_tl into one variable of tangent-linear tracer concentration
-   zicapprox3d(:,:,:) = tsn_tl(:,:,:,jp_tem) + tsb_tl(:,:,:,jp_tem)
-   CALL lbc_lnk(zicapprox3d(:,:,:), 'T', 1.0_wp)
+
    CALL iom_rstput(kstp, kstp, ncid,    'pt_conc_tl', zicapprox3d)
+
    !! Output ventilation volume
    CALL iom_rstput(kstp, kstp, ncid, 'pt_vent_tl', tmp_rm(:,:))
-
 
 ELSEIF (wri_swi==1) THEN
    WRITE(zfname, FMT='(A,I0.8,A)') 'PTTAM_output_', kstp, '.nc'
@@ -318,8 +307,8 @@ END IF
    CALL iom_rstput(kstp, kstp, ncid, 'tn'   , tsn(:,:,:,jp_tem)   )
    CALL iom_rstput(kstp, kstp, ncid, 'sn'   , tsn(:,:,:,jp_sal)   )
    CALL iom_close(ncid)
-   CALL wrk_dealloc(jpi, jpj, jpk, zicapprox3d) 
 
+   CALL wrk_dealloc(jpi, jpj, jpk, zicapprox3d) 
 END SUBROUTINE pt_tam_wri
 
 #endif

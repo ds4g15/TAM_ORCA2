@@ -124,7 +124,11 @@ NEMOTAM should be initialised using `31x149x182` arrays stored in a netCDF file,
   - `nn_ittrjfrq_tan`: output frequency 
   - `cn_tantrj`: location and filename format of output
 - namelist section **nampttam**
-Additional options for passive-tracer propagation (options coming soon)
+  - `ln_pt_region` : switch to only read and write output on a subset of the global grid
+  - `rn_NEptlat`   : specify the northeast and southwest corners (lat and lon) of the subset of interest
+  - `rn_SWptlat`
+  - `rn_NEptlon`
+  - `rn_SWptlon` 
 
 - namelist section **namtra\_adv\_tam** (Options for passive tracer advection scheme)
   - `ln_traadv_cen2` 2nd order centred
@@ -215,7 +219,7 @@ All changes and their purpose are listed here and were either added by S. Muelle
 - 20191004U: Introduction of TVD scheme to tangent-linear and reversed fields to adjoint
 - 20191004V: Option to output scalar time series of CF applied to trajectory
 - 20191004W: Option to include EIV
-
+- 20191013A: Switch and parameters to only write and read trajectory in a lat/lon defined region. If a CPU has no points in this region, it doesn't write trajectory tiles, except on the first time-step of the run. When reading, this CPU simply reads the first time step repeatedly. Any passive tracer concentration outside of this region is set to 0 to prevent instabilities. Dramatically reduces storage space required to run the trajectory for localised passive tracer studies.
 
 ## References
 Fiadeiro, M.E. and Veronis, G., 1977. On weighted-mean schemes for the finite-difference approximation to the advection-diffusion equation. Tellus, 29(6), pp.512-522.
