@@ -14,6 +14,9 @@ MODULE pttam
   USE tamctl
   USE iom
   USE trj_tam
+  !!!20191013A
+  USE tamtrj, ONLY: ln_pt_regional, rn_SWptlat, rn_SWptlon, rn_NEptlat, rn_NEptlon
+  !!!/20191013A
   USE wrk_nemo
   USE step_tam, ONLY: stp_tan, stp_adj
   USE step_oce_tam
@@ -157,10 +160,11 @@ CONTAINS
        sshb_tl(:,:) = 0.0_wp
 
      !!! 20191013A - kill tracer concentrations outside region of interest
-     !IF (.NOT. ( (narea-1==38) .OR. (narea-1==39) .OR. (narea-1==42) .OR. (narea-1==43) .OR. (narea-1==46) .OR. (narea-1==47) .OR. (narea-1==50) .OR. (narea-1==51) )) THEN
-     IF ( NOT ( ANY( (gphit < 60) .AND. ( gphit > 10)) .AND. ANY( (glamt > -70) .AND. (glamt < 0 ) ) ) ) THEN
-        tsn_tl(:,:,:,jp_tem)=0.0_wp
-        tsb_tl(:,:,:,jp_tem)=0.0_wp        
+     IF (ln_pt_regional == .TRUE.) THEN
+        IF ( NOT ( ANY( (gphit < rn_NEptlat) .AND. ( gphit > rn_SWptlat)) .AND. ANY( (glamt > rn_SWptlon) .AND. (glamt < rn_NEptlon ) ) ) ) THEN
+           tsn_tl(:,:,:,jp_tem)=0.0_wp
+           tsb_tl(:,:,:,jp_tem)=0.0_wp        
+        END IF
      END IF
      !!!/20191013A
 
@@ -257,6 +261,16 @@ SUBROUTINE pt_adj
      ub_ad(:,:,:) = 0.0_wp
      vb_ad(:,:,:) = 0.0_wp
      sshb_ad(:,:) = 0.0_wp
+
+!!! 20191013A - kill tracer concentrations outside region of interest
+     IF (ln_pt_regional == .TRUE.) THEN
+        IF ( NOT ( ANY( (gphit < rn_NEptlat) .AND. ( gphit > rn_SWptlat)) .AND. ANY( (glamt > rn_SWptlon) .AND. (glamt < rn_NEptlon ) ) ) ) THEN
+           tsn_ad(:,:,:,jp_tem)=0.0_wp
+           tsb_ad(:,:,:,jp_tem)=0.0_wp        
+        END IF
+     END IF
+!!!/20191013A
+
 
      CALL stp_adj(istep)
 
