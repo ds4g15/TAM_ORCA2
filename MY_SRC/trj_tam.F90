@@ -979,25 +979,17 @@ CONTAINS
             IF (.not.PRESENT(kadj)) THEN
 !!! /20191004H
 
-!!! 20191004B combine variables into a single output             
-               zicapprox3d(:,:,:) = tsn_tl(:,:,:,jp_tem) + tsb_tl(:,:,:,jp_tem)
-               CALL lbc_lnk(zicapprox3d(:,:,:), 'T', 1.0_wp)
-               CALL iom_rstput( it, it, inum, 't_tl'    , zicapprox3d)
+!!! 20191004B rename TL output variables             
+               CALL iom_rstput( it, it, inum, 't_tl'    , tsn_tl(:,:,:,jp_tem)   )
                !CALL iom_rstput( it, it, inum, 'tn_tl'   , tsn_tl(:,:,:,jp_tem)   )
 
-               zicapprox3d(:,:,:) = tsn_tl(:,:,:,jp_tem) + tsb_tl(:,:,:,jp_tem)
-               CALL lbc_lnk(zicapprox3d(:,:,:), 'T', 1.0_wp)
-               CALL iom_rstput( it, it, inum, 's_tl'    , zicapprox3d)
+               CALL iom_rstput( it, it, inum, 's_tl'    , tsn_tl(:,:,:,jp_sal)
                !CALL iom_rstput( it, it, inum, 'sn_tl'   , tsn_tl(:,:,:,jp_sal)   )
 
-               zicapprox3d(:,:,:) = tsn_tl(:,:,:,jp_tem) + tsb_tl(:,:,:,jp_tem)
-               CALL lbc_lnk(zicapprox3d(:,:,:), 'U', -1.0_wp)
-               CALL iom_rstput( it, it, inum, 'u_tl'    , zicapprox3d)
+               CALL iom_rstput( it, it, inum, 'u_tl'    , un_tl)
                !CALL iom_rstput( it, it, inum, 'un_tl'   , un_tl   )               
 
-               zicapprox3d(:,:,:) = tsn_tl(:,:,:,jp_tem) + tsb_tl(:,:,:,jp_tem)
-               CALL lbc_lnk(zicapprox3d(:,:,:), 'V', -1.0_wp)
-               CALL iom_rstput( it, it, inum, 'v_tl'    , zicapprox3d)
+               CALL iom_rstput( it, it, inum, 'v_tl'    , vn_tl)
                !CALL iom_rstput( it, it, inum, 'vn_tl'   , vn_tl   )
 
 !!! /20191004B
